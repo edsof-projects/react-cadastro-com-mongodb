@@ -2,6 +2,7 @@ import styles from './Home.module.css'
 import Trash from '../../assets/trash.png'
 import api from '../../services/api'
 import { useEffect, useState, useRef } from 'react'
+import { Link } from 'react-router-dom'
 
 function Home() {
   const [users, setUsers] = useState([])
@@ -79,9 +80,9 @@ function Home() {
 
   return (
     <div className={styles.section}>
-      <div className={styles.container}> 
+      <div className={styles.container}>
         <h1>Listagem de Usuários</h1>
-        <div className={styles.content}>        
+        <div className={styles.content}>
           {users.map((user) => (
 
             <div key={user.id} className={styles.card}>
@@ -96,7 +97,11 @@ function Home() {
               </button>
             </div>
           ))}
-        </div>      
+        </div>
+      <div className={styles.logaut}>
+         <p>Logaut</p>
+         <p><Link to='/' className={styles.btnLogaut}>Sair</Link></p> 
+      </div>
       </div>
 
     </div>

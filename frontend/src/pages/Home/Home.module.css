@@ -72,3 +72,27 @@ h1{
         width: 32px;    
     }
 }
+
+.logaut{
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* background-color: #fff; */
+
+    & p {
+        color: #fff;
+    }
+}
+
+.btnLogaut{
+    text-decoration: none;
+    color: #8b8ae1
+}
+
+.btnLogaut:hover{
+    color: #d7d7eb;
+}
+

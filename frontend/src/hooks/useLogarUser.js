@@ -18,8 +18,9 @@ export function useLogarUser() {
       });
 
       if (res.status === 200) {
-        alert('Acesso liberado com sucesso!');
+        alert('Acesso liberado seja bem-vindo!');
         limparCampos();
+        location.href ='/users'
         // Pode salvar token ou redirecionar aqui
       }else{
         alert('Desculpe você não tem acesso ao sistema!');
@@ -27,6 +28,7 @@ export function useLogarUser() {
       }
     } catch (error) {
       alert('Usuário ou senha incorretos!');
+      limparCampos();
       //console.error('Erro ao liberar acesso ao usuário:', error);
     }
   };

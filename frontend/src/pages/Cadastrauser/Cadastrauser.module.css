@@ -32,8 +32,9 @@
             border: none;
             font-weight: bold;
             cursor: pointer;
-            color: #fff;
-            font-weight: 500;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: bold;
         }
 
         & button:hover{
