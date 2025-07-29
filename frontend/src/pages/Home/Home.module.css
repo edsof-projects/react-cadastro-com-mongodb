@@ -28,7 +28,7 @@
     grid-template-columns: 1fr 2fr;    
     overflow: hidden;
     overflow-y: scroll; /* Barra de rolagem vertical */
-    border: 1px solid #3e9771;  
+    border: 1px solid #1c70c445;  
     padding: 1rem; 
 }
 
@@ -79,8 +79,7 @@ h1{
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    /* background-color: #fff; */
+    align-items: center;    
 
     & p {
         color: #fff;
@@ -89,7 +88,8 @@ h1{
 
 .btnLogaut{
     text-decoration: none;
-    color: #8b8ae1
+    color: #8b8ae1;
+    cursor: pointer;
 }
 
 .btnLogaut:hover{

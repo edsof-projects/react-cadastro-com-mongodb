@@ -1,6 +1,9 @@
 import pkg from '@prisma/client';
 import express from 'express'
 import cors from 'cors'
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import { ObjectId } from 'mongodb';
 
 const { PrismaClient } = pkg;
 const prisma = new PrismaClient();
@@ -12,34 +15,68 @@ app.use(cors())
 //Porta
 const PORT = 3000
 
+const SECRET = 'seu-segredo-aqui'; // use variáveis de ambiente em produção!
+
+// Middleware para proteger rotas
+function autenticarToken(req, res, next) 
+{
+  const authHeader = req.headers['authorization'];
+  console.log('Authorization header:', authHeader);
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Token não fornecido' });
+
+  jwt.verify(token, SECRET, (err, user) => {
+    if (err) {
+      console.log('Erro ao verificar token:', err);
+      return res.status(403).json({ error: 'Token inválido' });
+    }
+    req.user = user;
+    next();
+  });
+}
+
 //ROTAS 
 // create user
-app.post('/users', async (req, res) =>{
-   
-    await prisma.user.create({
-        data:{
-            email : req.body.email,
-            name  : req.body.name,
-            age   : Number(req.body.age),
-            senha : req.body.senha
-        }
-    })
+app.post('/users', async (req, res) => {
+  const { name, age, email, senha } = req.body;
 
-    res.status(201).json(req.body)
-})
+  try {
+    const hashedPassword = await bcrypt.hash(senha, 10);
+
+    const novoUsuario = await prisma.user.create({
+      data: {
+        name,
+        age: Number(age),
+        email,
+        senha: hashedPassword,
+      },
+    });
+
+    res.status(201).json(novoUsuario);
+  } catch (error) {
+    console.error('Erro ao cadastrar usuário:', error);
+    res.status(500).json({ error: 'Erro ao cadastrar usuário' });
+  }
+});
 
 //lista users, pode ser por name, email, age
-app.get('/users', async (req, res) => {
+app.get('/users', autenticarToken, async (req, res) => {
   try {
     const filters = {};
 
     if (req.query.name)  filters.name  = req.query.name;
     if (req.query.email) filters.email = req.query.email;
-    if (req.query.age)   filters.age   = Number(req.query.age); // se 'age' for número
-    if (req.query.senha) filters.senha = req.query.senha;
+    if (req.query.age)   filters.age   = Number(req.query.age);
 
     const users = await prisma.user.findMany({
-      where: filters
+      where: filters,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        age: true,
+        // senha: false — omitida automaticamente por não estar incluída
+      }
     });
 
     res.status(200).json(users);
@@ -49,32 +86,44 @@ app.get('/users', async (req, res) => {
   }
 });
 
+
 //logar usuário por email e senha
 app.post('/login', async (req, res) => {
-  try {
-    const { email, senha } = req.body;
-    
-    if (!email || !senha) {
-      return res.status(400).json({ error: "Email e senha são obrigatórios" });
-    }
+  const { email, senha } = req.body;
 
-    const user = await prisma.user.findFirst({
-      where: {
-        email,
-        senha // ⚠️ Ideal seria comparar com bcrypt
-      }
+  if (!email || !senha) {
+    return res.status(400).json({ error: 'Email e senha são obrigatórios' });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email }
     });
 
     if (!user) {
-      return res.status(401).json({ error: "Usuário não encontrado ou senha incorreta" });
+      return res.status(401).json({ error: 'Usuário não encontrado' });
     }
 
-    res.status(200).json(user);
+    const senhaValida = await bcrypt.compare(senha, user.senha);
+
+    if (!senhaValida) {
+      return res.status(401).json({ error: 'Senha incorreta' });
+    }
+
+    // Senha correta, gera token JWT
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      SECRET, // sua chave secreta
+      { expiresIn: '1h' }
+    );
+
+    res.status(200).json({ token });
+
   } catch (error) {
-    console.error("Erro ao logar usuário:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error('Erro no login:', error);
+    res.status(500).json({ error: 'Erro interno no servidor' });
   }
-})
+});
 
 //lista user por id
 app.get('/users/:id', async (req, res) => {
@@ -96,37 +145,93 @@ app.get('/users/:id', async (req, res) => {
   }
 });
 
+app.put('/users/:id', autenticarToken, async (req, res) => {
+  const { name, age, email, senha } = req.body;
+  const userId = req.params.id;
 
-//editando users
-app.put('/users/:id', async (req, res) =>{
+  // Validação do ID como ObjectId do MongoDB
+  if (!ObjectId.isValid(userId)) {
+    return res.status(400).json({ error: 'ID inválido' });
+  }
 
-    await prisma.user.update({
-        where:{
-          id: req.params.id
-        },
-        data:{
-            email : req.body.email,
-            name  : req.body.name,
-            age: Number(req.body.age),
-            senha : req.body.senha
-        }
-    })
+  try {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(senha, saltRounds);
 
-    res.status(201).json(req.body)
-})
+    const usuarioEditado = await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        name,
+        age: Number(age),
+        email,
+        senha: hashedPassword,
+      },
+    });
+
+    res.status(200).json(usuarioEditado);
+  } catch (error) {
+    console.error('Erro ao editar usuário:', error);
+    res.status(500).json({ error: 'Erro ao editar usuário' });
+  }
+});
 
 //deletando users
-app.delete('/users/:id', async (req, res) =>{
+app.delete('/users/:id', autenticarToken, async (req, res) => {
+  const { id } = req.params;
 
-    await prisma.user.delete({
-        where:{
-          id: req.params.id
-        }  
-    })     
-    
-    res.status(200).json({ message : "Usuário excluído com sucesso!"})
-})
+  try {
+    const usuarioExcluido = await prisma.user.delete({
+      where: { id },
+    });
 
+    res.status(200).json({ message: 'Usuário excluído com sucesso!', usuarioExcluido });
+  } catch (error) {
+    console.error('Erro ao excluir usuário:', error);
+
+    if (error.code === 'P2025') {
+      // P2025: registro não encontrado
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+
+    res.status(500).json({ error: 'Erro ao excluir usuário.' });
+  }
+});
+
+
+//Busca parcial ou ordenação
+app.get('/users', autenticarToken, async (req, res) => {
+  try {
+    const { name, email, age, orderBy, orderDir } = req.query;
+
+    const filters = {};
+    if (name)  filters.name  = { contains: name, mode: 'insensitive' }; // busca parcial e case-insensitive
+    if (email) filters.email = email;
+    if (age)   filters.age   = Number(age);
+
+    const order = {};
+    if (orderBy) {
+      order[orderBy] = orderDir === 'desc' ? 'desc' : 'asc'; // padrão asc
+    }
+
+    const users = await prisma.user.findMany({
+      where: filters,
+      orderBy: orderBy ? order : undefined,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        age: true,
+      }
+    });
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Erro ao listar usuários:", error);
+    res.status(500).json({ message: "Erro ao listar usuários" });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Servidor local rodando em http://localhost:${PORT}`);
@@ -138,7 +243,7 @@ async function main() {
     await prisma.$connect();
     console.log('✅ Conectado ao MongoDB com Prisma!');
   } catch (error) {
-    console.error('Erro:', error);
+    console.error('❌ Erro ao conectar:', error);
   } finally {
     await prisma.$disconnect();
   }

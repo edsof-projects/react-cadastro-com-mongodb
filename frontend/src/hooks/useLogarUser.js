@@ -15,14 +15,17 @@ export function useLogarUser() {
       const res = await api.post('/login', {
         email: inputEmail.current.value,
         senha: inputSenha.current.value,
-      });
-
+      });           
+      
       if (res.status === 200) {
-        alert('Acesso liberado seja bem-vindo!');
+        const token = res.data.token;
+        console.log('Resposta da API:', res.data);
+        localStorage.setItem('token', token); // Adicione essa linha
+        //alert('Acesso liberado seja bem-vindo!');
         limparCampos();
-        location.href ='/users'
+        location.href = '/users'
         // Pode salvar token ou redirecionar aqui
-      }else{
+      } else {
         alert('Desculpe você não tem acesso ao sistema!');
         limparCampos();
       }

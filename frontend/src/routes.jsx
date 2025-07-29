@@ -3,6 +3,7 @@ import Logaruser from "./pages/Logaruser"
 import Cadastrauser from "./pages/Cadastrauser"
 import Home from "./pages/Home"
 import Notfound from "./pages/Notfound"
+import Editauser from "./pages/Editauser"
 
 const MainRoutes = () => {
     return(
@@ -11,6 +12,8 @@ const MainRoutes = () => {
             <Route exact path="/" element={<Logaruser />} /> 
             {/* pagina de cadastro de usuarios */}
             <Route exact path="/register" element={<Cadastrauser />} />
+            {/* pagina de edição de usuarios */}
+            <Route exact path="/editar/:id" element={<Editauser />} />
             {/* pagina de listagem de usuários - Home */}
             <Route exact path="/users" element={<Home />} />
             {/* pagina não encontrada */}
