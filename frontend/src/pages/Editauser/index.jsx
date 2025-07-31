@@ -1,10 +1,9 @@
-import styles from './Editauser.module.css'; 
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useEditaUser } from '../../hooks/useEditaUser';
 
-function Editauser() 
+export default function Editauser() 
 {
-  const { id } = useParams(); // ✅ pega o ID da rota
+  const { id } = useParams();
 
   const {
     inputName,
@@ -12,26 +11,15 @@ function Editauser()
     inputEmail,
     inputSenha,
     salvarAlteracoes
-  } = useEditaUser(id); // ✅ agora os dados são carregados
+  } = useEditaUser(id);
 
   return (
-    <div className={styles.section}>
-      <div className={styles.container}>
-        <form>
-          <h1>Editar Usuários</h1>
-          <input placeholder="nome" type="text" ref={inputName} />
-          <input placeholder="idade" type="number" ref={inputAge} />
-          <input placeholder="email" type="email" ref={inputEmail} />
-          <input placeholder="senha" type="password" ref={inputSenha} />
-          <button type="button" onClick={salvarAlteracoes}>Salvar</button>
-          <div>
-            <p>Ver lista de usuários</p>
-            <p><Link to='/users' className={styles.btnLogin}>Lista de Usuários</Link></p>
-          </div>
-        </form>
-      </div>
-    </div>
+    <form>
+      <input placeholder="Nome" ref={inputName} />
+      <input placeholder="Idade" type="number" ref={inputAge} />
+      <input placeholder="Email" type="email" ref={inputEmail} />
+      <input placeholder="Senha" type="password" ref={inputSenha} />
+      <button type="button" onClick={salvarAlteracoes}>Salvar</button>
+    </form>
   );
 }
-
-export default Editauser;

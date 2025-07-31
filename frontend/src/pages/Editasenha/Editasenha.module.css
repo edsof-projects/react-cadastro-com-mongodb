@@ -14,7 +14,7 @@
     justify-content: center;
     flex-direction: column;
 
-    & form{
+    form{
         width: 700px;
         max-width: 55%;
         display: flex;
@@ -32,12 +32,24 @@
             border: none;
             font-weight: bold;
             cursor: pointer;
-            color: #fff;
+            color: #ffffff;
             font-size: 1rem;
+            font-weight: bold;
         }
 
         & button:hover{
             opacity: 0.8;
+        }
+
+        & p{
+            text-align: center;
+            color: rgb(255, 255, 255);
+
+            & button{
+                color:  #7e74eb;
+                background: transparent;
+
+            }
         }
 
         & input{
@@ -52,39 +64,53 @@
             transition: all .2s linear;
         }
 
-        & input:focus{
+         & input:focus{
             box-shadow: 0 4px 4px rgba(255, 255, 255, 0.5);
-        }
-
-        & span{
-            text-align: center;
-            color: rgb(255, 255, 255);
-
-            & button{
-                color:  #7e74eb;
-                background: transparent;
-
-            }
         }
         
         ::-webkit-input-placeholder  { color:rgb(255, 255, 255); }
     }
 }
 
-.btnRegister{
+.card{
+    width: 400px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #413da7;
+    margin: 10px;
+    padding: 15px;
+    border-radius: 10px;
+
+    & p{
+        color: #fff;
+        font-weight: bold;
+    }
+
+    & span{
+        font-weight: normal;
+    }
+
+    & button{
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+    & button:hover {
+       opacity: 0.6;
+    }
+
+    & img{
+        width: 32px;    
+    }
+}
+
+.btnLogin{
     text-decoration: none;
     color: #8b8ae1
 }
 
-.btnRegister:hover{
+.btnLogin:hover{
     color: #d7d7eb;
-}
-
-.infos{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-direction: column;
-    gap: .2rem;
 }

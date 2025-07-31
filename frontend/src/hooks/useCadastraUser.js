@@ -1,44 +1,24 @@
-import { useRef } from 'react';
-import api from '../services/api';
+import { cadastrarUsuario } from '../services/userService';
+import { useNavigate } from 'react-router-dom';
 
 export function useCadastraUser() 
 {
-  const inputName  = useRef();
-  const inputAge   = useRef();
-  const inputEmail = useRef();
-  const inputSenha = useRef();
-
-  const limparCampos = () => {
-    inputName.current.value  = '';
-    inputAge.current.value   = '';
-    inputEmail.current.value = '';
-    inputSenha.current.value = '';
-  };
-
-  const createUser = async () => {
+  const navigate = useNavigate();
+  
+  async function cadastrar(dados, callbackDepois) {
     try {
-      const res = await api.post('/users', {
-        name : inputName.current.value,
-        age  : parseInt(inputAge.current.value),
-        email: inputEmail.current.value,
-        senha: inputSenha.current.value,
-      });
+      const res = await cadastrarUsuario(dados);
 
-      if (res.status === 201) {
+      if (res.status === 201 || res.ok) {
         alert('Usuário cadastrado com sucesso!');
-        limparCampos();
+        if (callbackDepois) callbackDepois(); // ex: limpar campos, recarregar usuários
+        navigate('/');
       }
     } catch (error) {
-      console.error('Erro ao criar usuário:', error);
-      alert('Erro ao criar usuário.');
+      console.error('Erro ao cadastrar usuário:', error);
+      alert('Erro ao cadastrar usuário. Verifique os dados e tente novamente.');
     }
-  };
+  }
 
-  return {
-    inputName,
-    inputAge,
-    inputEmail,
-    inputSenha,
-    createUser,
-  };
+  return { cadastrar }
 }

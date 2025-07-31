@@ -4,6 +4,7 @@ import cors from 'cors'
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { ObjectId } from 'mongodb';
+import userRoutes from './routes/userRoutes.js';
 
 const { PrismaClient } = pkg;
 const prisma = new PrismaClient();
@@ -11,6 +12,7 @@ const prisma = new PrismaClient();
 const app = express()
 app.use(express.json())
 app.use(cors())
+app.use('/users', userRoutes);
 
 //Porta
 const PORT = 3000
@@ -18,8 +20,7 @@ const PORT = 3000
 const SECRET = 'seu-segredo-aqui'; // use variáveis de ambiente em produção!
 
 // Middleware para proteger rotas
-function autenticarToken(req, res, next) 
-{
+function autenticarToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   console.log('Authorization header:', authHeader);
   const token = authHeader && authHeader.split(' ')[1];
@@ -59,33 +60,18 @@ app.post('/users', async (req, res) => {
   }
 });
 
-//lista users, pode ser por name, email, age
-app.get('/users', autenticarToken, async (req, res) => {
+//Pesquisar ID do usuario passando o email
+app.get('/users/email/:email', async (req, res) => {
+  const { email } = req.params;
   try {
-    const filters = {};
-
-    if (req.query.name)  filters.name  = req.query.name;
-    if (req.query.email) filters.email = req.query.email;
-    if (req.query.age)   filters.age   = Number(req.query.age);
-
-    const users = await prisma.user.findMany({
-      where: filters,
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        age: true,
-        // senha: false — omitida automaticamente por não estar incluída
-      }
-    });
-
-    res.status(200).json(users);
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
+    res.json(user);
   } catch (error) {
-    console.error("Erro ao listar usuários:", error);
-    res.status(500).json({ message: "Erro ao listar usuários" });
+    console.error('Erro ao buscar usuário:', error);
+    res.status(500).json({ message: 'Erro no servidor' });
   }
 });
-
 
 //logar usuário por email e senha
 app.post('/login', async (req, res) => {
@@ -145,6 +131,7 @@ app.get('/users/:id', async (req, res) => {
   }
 });
 
+//Altera user
 app.put('/users/:id', autenticarToken, async (req, res) => {
   const { name, age, email, senha } = req.body;
   const userId = req.params.id;
@@ -199,31 +186,30 @@ app.delete('/users/:id', autenticarToken, async (req, res) => {
   }
 });
 
-
 //Busca parcial ou ordenação
 app.get('/users', autenticarToken, async (req, res) => {
   try {
     const { name, email, age, orderBy, orderDir } = req.query;
 
     const filters = {};
-    if (name)  filters.name  = { contains: name, mode: 'insensitive' }; // busca parcial e case-insensitive
+    if (name)  filters.name  = { contains: name, mode: 'insensitive' };
     if (email) filters.email = email;
     if (age)   filters.age   = Number(age);
 
-    const order = {};
-    if (orderBy) {
-      order[orderBy] = orderDir === 'desc' ? 'desc' : 'asc'; // padrão asc
-    }
+    // Corrige a estrutura de 'order' para garantir compatibilidade com Prisma
+    const order = orderBy
+      ? [{ [orderBy]: orderDir === 'desc' ? 'desc' : 'asc' }]
+      : [{ name: 'asc' }]; // ordenação padrão
 
     const users = await prisma.user.findMany({
       where: filters,
-      orderBy: orderBy ? order : undefined,
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        age: true,
-      }
+      orderBy : order,
+      select  : {
+        id    : true,
+        name  : true,
+        email : true,
+        age   : true,
+      },
     });
 
     res.status(200).json(users);
@@ -232,6 +218,7 @@ app.get('/users', autenticarToken, async (req, res) => {
     res.status(500).json({ message: "Erro ao listar usuários" });
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`Servidor local rodando em http://localhost:${PORT}`);

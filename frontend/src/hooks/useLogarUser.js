@@ -1,44 +1,44 @@
-import { useRef } from 'react';
-import api from '../services/api';
+// src/hooks/useLogarUser.js
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { logarUsuario } from '../services/userService';
 
-export function useLogarUser() {
-  const inputEmail = useRef();
-  const inputSenha = useRef();
+export function useLogarUser() 
+{
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [erro, setErro]   = useState('');
+  const navigate = useNavigate();
 
-  const limparCampos = () => {
-    inputEmail.current.value = '';
-    inputSenha.current.value = '';
-  };
-
-  const logarUser = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault(); // Impede o refresh da página
     try {
-      const res = await api.post('/login', {
-        email: inputEmail.current.value,
-        senha: inputSenha.current.value,
-      });           
-      
-      if (res.status === 200) {
-        const token = res.data.token;
-        console.log('Resposta da API:', res.data);
-        localStorage.setItem('token', token); // Adicione essa linha
-        //alert('Acesso liberado seja bem-vindo!');
-        limparCampos();
-        location.href = '/users'
-        // Pode salvar token ou redirecionar aqui
+      const data = await logarUsuario(email, senha);
+      console.log('Resposta do backend:', data); // debug
+
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        navigate('/home');
       } else {
-        alert('Desculpe você não tem acesso ao sistema!');
-        limparCampos();
+        setErro('Credenciais inválidas');
+         // Limpa depois de 3 segundos
+        setTimeout(() => {
+          setEmail('');
+          setSenha('');
+          setErro('');
+        }, 3000);
       }
     } catch (error) {
-      alert('Usuário ou senha incorretos!');
-      limparCampos();
-      //console.error('Erro ao liberar acesso ao usuário:', error);
+      //console.error('Erro ao logar:', error);
+      setErro('Erro ao logar. Verifique suas credenciais.');
+       // Limpa depois de 3 segundos
+      setTimeout(() => {
+        setEmail('');
+        setSenha('');
+        setErro('');
+      }, 3000);
     }
   };
 
-  return {
-    inputEmail,
-    inputSenha,
-    logarUser,
-  };
+  return { email, setEmail, senha, setSenha, erro, handleLogin };
 }

@@ -1,27 +1,42 @@
-import styles from './Logaruser.module.css'
 import { useLogarUser } from '../../hooks/useLogarUser';
 import { Link } from 'react-router-dom'
+import styles from './Logaruser.module.css'
 
-function Logaruser() {
-    
-  const { inputEmail, inputSenha, logarUser } = useLogarUser();
-   
-    return (
-      <div className={styles.section}>
+export default function LogarUser() 
+{
+  const { email, setEmail, senha, setSenha, erro, handleLogin } = useLogarUser();
+
+  return (
+    <div className={styles.section}>
         <div className={styles.container}>
-          <form>
+          <form onSubmit={handleLogin}>
+            
             <h1>Acesso ao Sistema</h1>
-            <input placeholder="email" type="email"    ref={inputEmail} />
-            <input placeholder="senha" type="password" ref={inputSenha} />
-            <button type="button" onClick={logarUser}>Entrar</button>
-            <div>
-              <p>Ainda não tem cadastro?</p>  
-              <p><Link to='/register' className={styles.btnRegister}>Cadastre-se!</Link></p>   
-            </div>
-          </form>  
-        </div>
-      </div>
-    )
-}
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Senha"
+              value={senha}
+              onChange={e => setSenha(e.target.value)}
+              required
+            />
+            {erro && <p style={{ color: 'red', textAlign:'center' }}>{erro}</p>}
+            <button type="submit">Entrar</button>
 
-export default Logaruser
+            <div className={styles.infos}>
+              <span>Ainda não tem cadastro?</span>  
+              <Link to='/register' className={styles.btnRegister}>Cadastre-se!</Link> 
+              <Link to='/editarsenha' className={styles.btnRegister}>Esqueci a senha!</Link>
+            </div>   
+
+          </form>
+        </div>
+    </div>
+  )
+}
