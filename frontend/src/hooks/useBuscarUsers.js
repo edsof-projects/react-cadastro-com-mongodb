@@ -4,7 +4,7 @@ import apiComToken from '../services/apiComToken';
 export function useBuscarUsers() 
 {
   const [users, setUsers] = useState([]);
-  const [erro, setErro] = useState(null);
+  const [erro, setErro]   = useState(null);
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {

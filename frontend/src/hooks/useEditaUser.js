@@ -2,8 +2,8 @@ import { useEffect, useRef } from 'react';
 import { buscarUsuarioPorId, atualizarUsuario } from '../services/userService';
 
 export function useEditaUser(id) {
-  const inputName = useRef();
-  const inputAge = useRef();
+  const inputName  = useRef();
+  const inputAge   = useRef();
   const inputEmail = useRef();
   const inputSenha = useRef();
 

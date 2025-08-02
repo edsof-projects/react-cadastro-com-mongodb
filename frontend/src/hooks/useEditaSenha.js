@@ -1,68 +1,43 @@
-import { useEffect, useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
+import { buscarUsuarioPorId, buscarIdPorEmail, alterarSenhaPorEmail } from '../services/userService';
 
-export function useEditaSenha(id) 
+export function useEditaSenha() 
 {
-  const inputSenha = useRef();
   const inputEmail = useRef();
+  const inputSenha = useRef();
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
-    async function fetchUser() {
-      try {
-        const token    = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:3000/users/${id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`, // Token no header
-          },
-        });
-
-        if (!response.ok) throw new Error('Usuário não encontrado');
-
-        const data = await response.json();
-
+    async function fetchData() {
+      try {        
+        const idUser = await buscarIdPorEmail(inputEmail.current.value);
+        const data   = await buscarUsuarioPorId(idUser);
+        
         if (inputEmail.current) inputEmail.current.value = data.email || '';
-        if (inputSenha.current) inputSenha.current.value = ''; // Nunca pré-carregar senha        
+        if (inputSenha.current) inputSenha.current.value = '';
 
+        setEmail(data.email); // salvando email para uso posterior
       } catch (error) {
-        console.error('Erro ao buscar usuário:', error);
-        alert('Erro ao carregar dados do usuário.');
+        console.error('Erro ao carregar usuário:', error);
+        alert('Erro ao buscar usuário');
       }
     }
 
-    if (id) fetchUser();
-  }, [id]);
+    fetchData();
+  }, []); 
 
   async function salvarAlteracoes() {
     try {
-      const token = localStorage.getItem('token');
+      const novaSenha = inputSenha.current.value;
 
-      const res = await fetch(`http://localhost:3000/users/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, // Token no header
-        },
-        body: JSON.stringify({
-          senha: inputSenha.current.value,
-        }),
-      });
-
-      if (res.ok) {
-        alert('Senha atualizada com sucesso!');
-        window.location.href = '/users';
-      } else {
-        alert('Erro ao atualizar usuário.');
-      }
+      await alterarSenhaPorEmail(email, novaSenha);
+      alert('Senha atualizada com sucesso!');
+      window.location.href = '/';
     } catch (error) {
-      console.error('Erro ao salvar alterações:', error);
-      alert('Erro ao salvar alterações.');
+      console.error('Erro ao atualizar senha:', error);
+      alert('Erro ao salvar alterações');
     }
   }
 
-  return {
-    inputEmail,
-    inputSenha,
-    salvarAlteracoes,
-  };
+  return { inputEmail, inputSenha, salvarAlteracoes };
 }

@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import { useCadastraUser } from '../../hooks/useCadastraUser';
-import styles from './Cadastrauser.module.css';
 import { Link } from 'react-router-dom';
 import { capitalizeFirstLetter } from '../../utils/formatters';
+import styles from './Cadastrauser.module.css';
 
 export default function Cadastrauser() 
 {
