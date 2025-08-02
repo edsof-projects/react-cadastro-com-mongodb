@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { useCadastraUser } from '../../hooks/useCadastraUser';
 import { Link } from 'react-router-dom';
 import { capitalizeFirstLetter } from '../../utils/formatters';
@@ -12,6 +12,10 @@ export default function Cadastrauser()
   const inputAge   = useRef();
   const inputEmail = useRef();
   const inputSenha = useRef();
+
+  useEffect(() => {
+    inputName.current.focus(); // Foca automaticamente ao montar
+  }, []);
 
   const handleCadastrar = async () => {
     const dados = {

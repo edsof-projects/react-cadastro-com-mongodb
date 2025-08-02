@@ -1,6 +1,6 @@
 import styles from './Editasenha.module.css'; 
 import { Link, useNavigate } from 'react-router-dom';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { alterarSenhaPorEmail } from '../../services/userService';
 
 function Editasenha() 
@@ -9,6 +9,10 @@ function Editasenha()
   const inputSenha1 = useRef();
   const inputSenha2 = useRef();
   const navigate    = useNavigate();
+
+   useEffect(() => {
+      inputEmail.current.focus(); // Foca automaticamente ao montar
+    }, []);
 
   const handleSalvar = async () => 
   {

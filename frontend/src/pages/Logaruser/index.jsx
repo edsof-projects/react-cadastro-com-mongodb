@@ -1,10 +1,16 @@
 import { useLogarUser } from '../../hooks/useLogarUser';
 import { Link } from 'react-router-dom'
+import { useRef, useEffect } from 'react';
 import styles from './Logaruser.module.css'
 
 export default function LogarUser() 
 {
   const { email, setEmail, senha, setSenha, erro, handleLogin } = useLogarUser();
+  const inputEmail = useRef()
+
+  useEffect(() => {
+    inputEmail.current.focus(); // Foca automaticamente ao montar
+  }, []);
 
   return (
     <div className={styles.section}>
@@ -17,6 +23,7 @@ export default function LogarUser()
               placeholder="Email"
               value={email}
               onChange={e => setEmail(e.target.value)}
+              ref={inputEmail}
               required
             />
             <input

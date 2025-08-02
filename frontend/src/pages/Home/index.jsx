@@ -36,7 +36,7 @@ function Home()
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');    
     if (!token) {
       alert('Você precisa estar logado.');
       location.href = '/';
