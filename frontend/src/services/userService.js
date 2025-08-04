@@ -36,12 +36,6 @@ export async function alterarSenhaPorEmail(email, novaSenha) {
   return res.data
 }
 
-// Buscar usuário por ID
-// export async function buscarUsuarioPorId(id) {
-//   const res = await apiComToken.get(`/users/${id}`);
-//   return res.data;
-// }
-
 export async function getUserById(id) {
   const res = await apiComToken.get(`/users/${id}`);
   return res.data;

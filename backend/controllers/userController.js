@@ -35,7 +35,8 @@ export const logarUsuario = async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    res.status(200).json({ token });
+    // Retorna token e nome do usuário (ajuste aqui)
+    res.status(200).json({ token, nome: user.name });
 
   } catch (error) {
     console.error('Erro no login:', error);

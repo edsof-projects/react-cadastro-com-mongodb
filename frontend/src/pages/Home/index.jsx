@@ -1,22 +1,26 @@
 import styles                           from './Home.module.css';
 import Trash                            from '../../assets/trash.png';
+import Foto                             from '../../assets/foto.png';
 import Lupa                             from '../../assets/lupa.png';
 import Limpar                           from '../../assets/limpar.png';
 import Edit                             from '../../assets/editar.png';
 import { useEffect, useState, useRef }  from 'react';
+import { useAuth }                      from '../../context/AuthContext';
 import { listarUsuarios }               from '../../services/userService';
 import { useNavigate }                  from 'react-router-dom';
 import { useDeletaUser }                from '../../hooks/useDeletaUser';
 import { ordenarPorNome }               from '../../utils/ordenar';
 import { useFiltroUsuarios }            from '../../hooks/useFiltroUsuarios';
+import { pegarPrimeiroNome }            from '../../utils/formatters';
 
 function Home() {
   const [users, setUsers] = useState([]);
   const { deletar }       = useDeletaUser();
   const navigate          = useNavigate();
   const inputPesquisaRef  = useRef(null);
+  const { user }          = useAuth();
   const { termo, setTermo, usuariosFiltrados } = useFiltroUsuarios(users);
-
+  
   const getUsers = async () => {
     try {
       const dados = await listarUsuarios();
@@ -45,12 +49,16 @@ function Home() {
       location.href = '/';
       return;
     }
-
     getUsers();
   }, []);
 
   return (
     <div className={styles.section}>
+      <div className={styles.areaUserLogado}>
+        <img src={Foto} alt="Foto do usuário" className={styles.fotoUser}/>
+        {user && <p className={styles.nomeUsuario}>Bem-vindo {pegarPrimeiroNome(user.nome)}</p>}
+
+      </div>
       <div className={styles.container}>
         <h1>Listagem de Usuários</h1>
 
