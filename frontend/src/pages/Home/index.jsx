@@ -7,7 +7,7 @@ import Edit                             from '../../assets/editar.png';
 import { useEffect, useState, useRef }  from 'react';
 import { useAuth }                      from '../../context/AuthContext';
 import { listarUsuarios }               from '../../services/userService';
-import { useNavigate }                  from 'react-router-dom';
+import { useNavigate, Link }            from 'react-router-dom';
 import { useDeletaUser }                from '../../hooks/useDeletaUser';
 import { ordenarPorNome }               from '../../utils/ordenar';
 import { useFiltroUsuarios }            from '../../hooks/useFiltroUsuarios';
@@ -54,11 +54,13 @@ function Home() {
 
   return (
     <div className={styles.section}>
+      
       <div className={styles.areaUserLogado}>
         <img src={Foto} alt="Foto do usuário" className={styles.fotoUser}/>
         {user && <p className={styles.nomeUsuario}>Bem-vindo {pegarPrimeiroNome(user.nome)}</p>}
-
+        <p onClick={sair} className={styles.LinkSair}>Logout</p>
       </div>
+     
       <div className={styles.container}>
         <h1>Listagem de Usuários</h1>
 
@@ -122,8 +124,7 @@ function Home() {
           <p>
             Total de Usuários Cadastrados: {usuariosFiltrados.length}
             {termo && ` (de um total de ${users.length})`}
-          </p>
-          <p onClick={sair} className={styles.btnLogaut}>Logout</p>
+          </p>          
         </div>
       </div>
     </div>

@@ -85,10 +85,10 @@ export default function Editauser() {
           />
           <button type="submit">Salvar</button>
           <div>
-            <p>Voltar</p>
+            <p>Listagem</p>
             <p>
               <Link to="/home" className={styles.btnLogin}>
-                Listagem
+                Voltar
               </Link>
             </p>
           </div>
