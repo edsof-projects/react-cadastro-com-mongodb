@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { useCadastraUser } from '../../hooks/useCadastraUser';
+import { useEnterToNextInput } from '../../hooks/useEnterToNextInput';
 import { Link } from 'react-router-dom';
 import { capitalizeFirstLetter } from '../../utils/formatters';
 import styles from './Cadastrauser.module.css';
@@ -7,6 +8,7 @@ import styles from './Cadastrauser.module.css';
 export default function Cadastrauser() 
 {
   const { cadastrar } = useCadastraUser();
+  const formRef = useEnterToNextInput('formId');
 
   const inputName  = useRef();
   const inputAge   = useRef();
@@ -32,20 +34,20 @@ export default function Cadastrauser()
       inputEmail.current.value = '';
       inputSenha.current.value = '';
     });
-  };
+  }
 
   return (
     <div className={styles.section}>
       <div className={styles.container}>
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={(e) => e.preventDefault()} id="formId" ref={formRef}>
           <h1>Cadastro de Usuários</h1>
-          <input ref={inputName} placeholder="Nome" />
-          <input ref={inputAge} placeholder="Idade" type="number" />
-          <input ref={inputEmail} placeholder="Email" type="email" />
-          <input ref={inputSenha} placeholder="Senha" type="password" />
+          <input  ref={inputName}  placeholder="Nome"  type="text"/>
+          <input  ref={inputAge}   placeholder="Idade" type="number" />
+          <input  ref={inputEmail} placeholder="Email" type="email" />
+          <input  ref={inputSenha} placeholder="Senha" type="password" />
           <button type="button" onClick={handleCadastrar}>Cadastrar</button>
           <div>
-            <p>Já fez o seu cadastro? </p>  
+            <p>Já tem cadastro? </p>  
             <p><Link to='/' className={styles.btnLogin}>Faça o Login</Link></p> 
           </div>
         </form>

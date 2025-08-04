@@ -103,3 +103,44 @@ h1{
     gap: 2rem;
     margin-top: 4rem;
 }
+
+.areaPesquisa{
+    width: 880px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-block: 5px;
+    position: relative;      
+
+    & input{
+        width: 50%;         
+        padding: .7rem;
+        margin-top: -1rem;
+        margin-bottom: 1rem;
+        border-radius: 1.5rem;
+        border-color: #ffffff5c;
+        background-color: transparent;
+        outline: none;
+        color: #d7d7eb;
+        font-size: 18px;        
+    }
+
+    & img{
+        width: 32px;   
+        position: absolute;
+        margin-left: 24rem;  
+        margin-top: -2rem;  
+    }
+    
+   & img:hover {
+     transform: scale(1.2);
+     transition: transform 0.2s ease;
+     opacity: 0.8;
+     cursor: pointer;
+   }
+
+   .imgapagar{
+      width: 27px;
+   }
+   
+}

@@ -2,12 +2,14 @@ import styles from './Editasenha.module.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRef, useEffect } from 'react';
 import { alterarSenhaPorEmail } from '../../services/userService';
+import { useEnterToNextInput } from '../../hooks/useEnterToNextInput';
 
 function Editasenha() 
 {
   const inputEmail  = useRef();
   const inputSenha1 = useRef();
   const inputSenha2 = useRef();
+  const formRef     = useEnterToNextInput('formId');
   const navigate    = useNavigate();
 
    useEffect(() => {
@@ -53,7 +55,7 @@ function Editasenha()
   return (
     <div className={styles.section}>
       <div className={styles.container}>
-        <form>
+        <form id="formId" ref={formRef}>
           <h1>Alteração de Senha</h1>
           <input placeholder="Digite seu email" type="email" ref={inputEmail} />
           <input placeholder="Digite a nova senha" type="password" ref={inputSenha1} />

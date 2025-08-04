@@ -1,4 +1,5 @@
 import { useLogarUser } from '../../hooks/useLogarUser';
+import { useEnterToNextInput } from '../../hooks/useEnterToNextInput';
 import { Link } from 'react-router-dom'
 import { useRef, useEffect } from 'react';
 import styles from './Logaruser.module.css'
@@ -6,7 +7,8 @@ import styles from './Logaruser.module.css'
 export default function LogarUser() 
 {
   const { email, setEmail, senha, setSenha, erro, handleLogin } = useLogarUser();
-  const inputEmail = useRef()
+  const inputEmail  = useRef()
+  const formRef     = useEnterToNextInput('formId');
 
   useEffect(() => {
     inputEmail.current.focus(); // Foca automaticamente ao montar
@@ -15,7 +17,7 @@ export default function LogarUser()
   return (
     <div className={styles.section}>
         <div className={styles.container}>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleLogin} id="formId" ref={formRef}>
             
             <h1>Acesso ao Sistema</h1>
             <input

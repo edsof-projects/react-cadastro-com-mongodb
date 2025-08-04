@@ -1,6 +1,7 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { getUserById, atualizarUsuario } from '../../services/userService';
+import { useEnterToNextInput } from '../../hooks/useEnterToNextInput';
 import { capitalizeFirstLetter } from '../../utils/formatters';
 import styles from './Editauser.module.css';
 
@@ -9,6 +10,7 @@ export default function Editauser() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: '', age: '', email: '' });
   const inputName = useRef();
+  const formRef   = useEnterToNextInput('formId');
 
   // Carrega os dados do usuário e, após preencher o estado, foca e seleciona o input uma única vez
   useEffect(() => {
@@ -56,7 +58,7 @@ export default function Editauser() {
   return (
     <div className={styles.section}>
       <div className={styles.container}>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} id="formId" ref={formRef}>
           <h1>Editar Usuário</h1>
           <input
             name="name"
