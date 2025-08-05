@@ -25,7 +25,7 @@ const MainRoutes = () => {
             <Route exact path="/home" element={<Home />} />
             
             {/* pagina não encontrada */}
-            <Route exact path="/notfound" element={<Notfound />} />
+            <Route path="*" element={<Notfound />} />
         </Routes>
     )
 }

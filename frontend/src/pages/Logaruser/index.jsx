@@ -1,18 +1,33 @@
-import { useLogarUser } from '../../hooks/useLogarUser';
-import { useEnterToNextInput } from '../../hooks/useEnterToNextInput';
-import { Link } from 'react-router-dom'
-import { useRef, useEffect } from 'react';
-import styles from './Logaruser.module.css'
+import { useLogarUser }         from '../../hooks/useLogarUser';
+import { useEnterToNextInput }  from '../../hooks/useEnterToNextInput';
+import { Link }                 from 'react-router-dom'
+import { useRef, useEffect }    from 'react';
+import styles                   from './Logaruser.module.css'
 
 export default function LogarUser() 
 {
   const { email, setEmail, senha, setSenha, erro, handleLogin } = useLogarUser();
-  const inputEmail  = useRef()
+  const inputEmail  = useRef();
   const formRef     = useEnterToNextInput('formId');
 
   useEffect(() => {
     inputEmail.current.focus(); // Foca automaticamente ao montar
   }, []);
+
+  // Monitora o erro para limpar após 3 segundos e focar input email
+  useEffect(() => {
+    if (erro) {
+      const timer = setTimeout(() => {
+        setEmail('');  // limpa email
+        setSenha('');  // limpa senha
+        // limpa erro e foca input email - você precisa expor setErro no hook para isso,
+        // ou faça um workaround se preferir
+        // aqui só o foco para email, pois setErro está no hook
+        inputEmail.current.focus();
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [erro, setEmail, setSenha]);
 
   return (
     <div className={styles.section}>

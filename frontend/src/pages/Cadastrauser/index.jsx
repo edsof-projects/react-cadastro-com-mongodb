@@ -8,12 +8,12 @@ import styles from './Cadastrauser.module.css';
 export default function Cadastrauser() 
 {
   const { cadastrar } = useCadastraUser();
-  const formRef = useEnterToNextInput('formId');
+  const formRef       = useEnterToNextInput('formId');
 
-  const inputName  = useRef();
-  const inputAge   = useRef();
-  const inputEmail = useRef();
-  const inputSenha = useRef();
+  const inputName     = useRef();
+  const inputAge      = useRef();
+  const inputEmail    = useRef();
+  const inputSenha    = useRef();
 
   useEffect(() => {
     inputName.current.focus(); // Foca automaticamente ao montar
@@ -41,9 +41,9 @@ export default function Cadastrauser()
       <div className={styles.container}>
         <form onSubmit={(e) => e.preventDefault()} id="formId" ref={formRef}>
           <h1>Cadastro de Usuários</h1>
-          <input  ref={inputName}  placeholder="Nome"  type="text"/>
-          <input  ref={inputAge}   placeholder="Idade" type="number" />
-          <input  ref={inputEmail} placeholder="Email" type="email" />
+          <input  ref={inputName}  placeholder="Nome"  type="text"     />
+          <input  ref={inputAge}   placeholder="Idade" type="number"   />
+          <input  ref={inputEmail} placeholder="Email" type="email"    />
           <input  ref={inputSenha} placeholder="Senha" type="password" />
           <button type="button" onClick={handleCadastrar}>Cadastrar</button>
           <div>

@@ -7,7 +7,7 @@ import Edit                             from '../../assets/editar.png';
 import { useEffect, useState, useRef }  from 'react';
 import { useAuth }                      from '../../context/AuthContext';
 import { listarUsuarios }               from '../../services/userService';
-import { useNavigate, Link }            from 'react-router-dom';
+import { useNavigate }                  from 'react-router-dom';
 import { useDeletaUser }                from '../../hooks/useDeletaUser';
 import { ordenarPorNome }               from '../../utils/ordenar';
 import { useFiltroUsuarios }            from '../../hooks/useFiltroUsuarios';

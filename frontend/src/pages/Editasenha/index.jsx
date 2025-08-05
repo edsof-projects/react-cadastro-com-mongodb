@@ -15,7 +15,7 @@ function Editasenha()
    useEffect(() => {
       inputEmail.current.focus(); // Foca automaticamente ao montar
     }, []);
-
+  
   const handleSalvar = async () => 
   {
     const email  = inputEmail.current.value.trim();  
@@ -57,9 +57,9 @@ function Editasenha()
       <div className={styles.container}>
         <form id="formId" ref={formRef}>
           <h1>Alteração de Senha</h1>
-          <input placeholder="Digite seu email" type="email" ref={inputEmail} />
-          <input placeholder="Digite a nova senha" type="password" ref={inputSenha1} />
-          <input placeholder="Repita a nova senha" type="password" ref={inputSenha2} />
+          <input placeholder="Digite seu email" type="email" ref={inputEmail} onChange={(e) => { e.target.value = e.target.value.toLowerCase()}} />
+          <input placeholder="Digite a nova senha" type="password" ref={inputSenha1} onClick={() => inputSenha1.current && inputSenha1.current.select()} />
+          <input placeholder="Repita a nova senha" type="password" ref={inputSenha2} onClick={() => inputSenha2.current && inputSenha2.current.select()} />
           <button type="button" onClick={handleSalvar}>Salvar</button>
           <div>
             <p>Logar no Sistema</p>

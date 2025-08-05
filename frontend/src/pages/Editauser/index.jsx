@@ -1,16 +1,17 @@
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
-import { getUserById, atualizarUsuario } from '../../services/userService';
-import { useEnterToNextInput } from '../../hooks/useEnterToNextInput';
-import { capitalizeFirstLetter } from '../../utils/formatters';
-import styles from './Editauser.module.css';
+import { useParams, useNavigate, Link }   from 'react-router-dom';
+import { useEffect, useRef, useState }    from 'react';
+import { getUserById, atualizarUsuario }  from '../../services/userService';
+import { useEnterToNextInput }            from '../../hooks/useEnterToNextInput';
+import { capitalizeFirstLetter }          from '../../utils/formatters';
+import styles                             from './Editauser.module.css';
 
-export default function Editauser() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+export default function Editauser() 
+{
+  const { id }          = useParams();
+  const navigate        = useNavigate();
   const [form, setForm] = useState({ name: '', age: '', email: '' });
-  const inputName = useRef();
-  const formRef   = useEnterToNextInput('formId');
+  const inputName       = useRef();
+  const formRef         = useEnterToNextInput('formId');
 
   // Carrega os dados do usuário e, após preencher o estado, foca e seleciona o input uma única vez
   useEffect(() => {
@@ -18,8 +19,8 @@ export default function Editauser() {
       try {
         const usuario = await getUserById(id);
         setForm({
-          name: capitalizeFirstLetter(usuario.name),
-          age: usuario.age,
+          name : usuario.name,
+          age  : usuario.age,
           email: usuario.email
         });
 
@@ -40,7 +41,13 @@ export default function Editauser() {
   }, [id]);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+      const { name, value } = e.target;
+
+      if (name === 'name') {
+        setForm({ ...form, [name]: capitalizeFirstLetter(value) });
+      } else {
+        setForm({ ...form, [name]: value });
+      }
   };
 
   const handleSubmit = async (e) => {
