@@ -120,7 +120,7 @@ function Home() {
           ))}
         </div>
 
-        <div className={styles.logaut}>
+        <div className={styles.info}>
           <p>
             Total de Usuários Cadastrados: {usuariosFiltrados.length}
             {termo && ` (de um total de ${users.length})`}
